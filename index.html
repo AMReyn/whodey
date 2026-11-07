@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who Dey Reynolds Video Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: black field, striped orange header band, season tabs, grid of video cards. */
+  --ink: #0b0b0b;
+  --panel: #171717;
+  --line: #2e2e2e;
+  --orange: #fb4f14;
+  --white: #f6f3ee;
+  --muted: #aaa49b;
+  --display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+
+.stripes {
+  height: 22px;
+  background:
+    repeating-linear-gradient(112deg,
+      var(--orange) 0 26px, var(--ink) 26px 34px,
+      var(--orange) 34px 70px, var(--ink) 70px 74px,
+      var(--orange) 74px 92px, var(--ink) 92px 104px);
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+header.top { padding: 40px 0 28px; }
+.kicker {
+  font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--orange); font-size: 14px; margin: 0 0 8px;
+}
+h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(48px, 10vw, 112px);
+  line-height: .95; letter-spacing: .01em; text-transform: uppercase;
+  margin: 0; text-wrap: balance;
+}
+h1 span { color: var(--orange); }
+.lede { max-width: 56ch; color: var(--muted); margin: 16px 0 0; }
+
+.bar {
+  display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.tabs {
+  display: flex; gap: 4px; overflow-x: auto; max-width: 100%;
+  border-bottom: 2px solid var(--line); flex: 1 1 auto;
+}
+.tab {
+  font: 400 26px var(--display); letter-spacing: .03em;
+  background: transparent; color: var(--muted);
+  border: 0; border-bottom: 5px solid transparent; margin-bottom: -2px;
+  padding: 6px 16px 4px; cursor: pointer; white-space: nowrap;
+}
+.tab:hover { color: var(--white); }
+.tab[aria-selected="true"] { color: var(--white); border-bottom-color: var(--orange); }
+.count { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; padding-bottom: 8px; }
+
+.grid {
+  display: grid; gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  padding: 22px 0 36px;
+}
+.card {
+  display: flex; flex-direction: column;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+  overflow: hidden;
+}
+.thumb {
+  position: relative; aspect-ratio: 16 / 9; display: block;
+  background-color: var(--orange);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90' viewBox='0 0 160 90'%3E%3Cg fill='%230b0b0b'%3E%3Cpath d='M0 0h14l-26 90h-14z'/%3E%3Cpath d='M44 0h8l-22 90h-9z'/%3E%3Cpath d='M82 0h18l-30 90h-16z'/%3E%3Cpath d='M126 0h7l-20 90h-8z'/%3E%3Cpath d='M160 0h12l-26 90h-13z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 160px 90px;
+}
+.play {
+  position: absolute; inset: 0; margin: auto; width: 62px; height: 62px;
+  border-radius: 50%; background: var(--ink); display: grid; place-items: center;
+  transition: transform .15s ease;
+}
+.play::before {
+  content: ""; margin-left: 5px;
+  border-left: 20px solid var(--orange);
+  border-top: 12px solid transparent; border-bottom: 12px solid transparent;
+}
+.thumb:hover .play { transform: scale(1.08); }
+.badge {
+  position: absolute; left: 10px; top: 10px;
+  background: var(--ink); color: var(--white);
+  font: 700 12px var(--body); letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 3px;
+}
+.season {
+  position: absolute; right: 10px; bottom: 10px;
+  background: var(--ink); color: var(--orange);
+  font: 400 18px var(--display); letter-spacing: .04em;
+  padding: 1px 10px; border-radius: 3px;
+}
+.body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.body h2 {
+  font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.1;
+  letter-spacing: .02em; text-transform: uppercase; margin: 0; text-wrap: balance;
+}
+.note { color: var(--muted); font-size: 15px; margin: 0; }
+.row { margin-top: auto; padding-top: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.watch { font-weight: 700; color: var(--orange); text-decoration: none; }
+.watch:hover { text-decoration: underline; }
+.remove {
+  font: 600 13px var(--body); color: var(--muted); background: none;
+  border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer;
+}
+.remove:hover { color: var(--white); border-color: var(--white); }
+.empty { grid-column: 1 / -1; color: var(--muted); padding: 10px 0; }
+
+.add {
+  border-top: 6px solid var(--orange); background: var(--panel);
+  padding: 26px 0 30px;
+}
+.add h3 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase;
+  font-size: 32px; letter-spacing: .02em; margin: 0 0 4px;
+}
+.add p.hint { color: var(--muted); margin: 0 0 18px; font-size: 15px; }
+form { display: grid; gap: 14px; grid-template-columns: 2fr 1.4fr .8fr 1fr auto; align-items: end; }
+label { display: grid; gap: 5px; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+input, select {
+  font: 400 16px var(--body); color: var(--white); background: var(--ink);
+  border: 2px solid var(--line); border-radius: 4px; padding: 10px 12px; min-width: 0; width: 100%;
+}
+input:focus-visible, select:focus-visible { border-color: var(--orange); outline-offset: 0; }
+button.submit {
+  font: 700 16px var(--body); letter-spacing: .06em; text-transform: uppercase;
+  background: var(--orange); color: var(--ink); border: 0; border-radius: 4px;
+  padding: 12px 22px; cursor: pointer;
+}
+button.submit:hover { background: var(--white); }
+.msg { min-height: 1.4em; margin: 12px 0 0; font-size: 15px; color: var(--orange); }
+@media (max-width: 820px) { form { grid-template-columns: 1fr 1fr; } form label:first-child { grid-column: 1 / -1; } button.submit { grid-column: 1 / -1; } }
+@media (max-width: 480px) { form { grid-template-columns: 1fr; } .tab { font-size: 22px; padding: 6px 12px 4px; } }
+
+footer { padding: 22px 0 34px; color: var(--muted); font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .play { transition: none; } .thumb:hover .play { transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="stripes" aria-hidden="true"></div>
+
+<header class="top wrap">
+  <p class="kicker">Cincinnati · Videos by season</p>
+  <h1>Who Dey Reynolds <span>Video Vault</span></h1>
+  <p class="lede">Bengals videos from YouTube, sorted by season. Pick a year, then hit a card to watch it on YouTube.</p>
+</header>
+
+<main class="wrap">
+  <div class="bar">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Season"></div>
+    <div class="count" id="count" aria-live="polite"></div>
+  </div>
+  <section class="grid" id="grid" role="tabpanel" aria-label="Videos"></section>
+</main>
+
+<section class="add">
+  <div class="wrap">
+    <h3>Add a video</h3>
+    <p class="hint">Paste any YouTube link (video, Short, playlist or channel), pick its season and enter the password. Videos you add are saved in this browser only.</p>
+    <form id="addForm" novalidate>
+      <label for="fUrl">YouTube link
+        <input id="fUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+      </label>
+      <label for="fTitle">Title
+        <input id="fTitle" type="text" placeholder="Burrow to Chase, 4th quarter" autocomplete="off">
+      </label>
+      <label for="fSeason">Season
+        <select id="fSeason"></select>
+      </label>
+      <label for="fPass">Password
+        <input id="fPass" type="password" autocomplete="off">
+      </label>
+      <button class="submit" type="submit">Add</button>
+    </form>
+    <p class="msg" id="msg" role="alert"></p>
+  </div>
+</section>
+
+<div class="stripes" aria-hidden="true"></div>
+<footer class="wrap">Unofficial fan page. Not affiliated with the NFL or the Cincinnati Bengals. Videos play on YouTube and belong to their creators.</footer>
+
+<script>
+(function () {
+  var SEASONS = ['2026', '2025', '2024', '2023', '2022', '2021', '2020'];
+  var STORE = 'whodey-vault-v2';
+
+  // Starter cards link to YouTube searches for each season. Swap each url for a specific video link.
+  var starters = [];
+  SEASONS.forEach(function (y) {
+    starters.push({ season: y, title: y + ' season highlights', url: 'https://www.youtube.com/results?search_query=Cincinnati+Bengals+' + y + '+season+highlights', note: 'Best plays from the ' + y + ' season.' });
+    starters.push({ season: y, title: y + ' game recaps', url: 'https://www.youtube.com/results?search_query=Cincinnati+Bengals+' + y + '+game+recap', note: 'Week-by-week recaps and condensed games.' });
+  });
+  starters.push({ season: '2021', title: 'Super Bowl LVI run', url: 'https://www.youtube.com/results?search_query=Bengals+2021+playoffs+Super+Bowl+LVI+run', note: 'The playoff push through the AFC.' });
+
+  var mine = [];
+  try { mine = JSON.parse(localStorage.getItem(STORE) || '[]'); if (!Array.isArray(mine)) mine = []; } catch (e) { mine = []; }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(mine)); } catch (e) {} }
+
+  var current = SEASONS[0];
+  var tabs = document.getElementById('tabs');
+  var grid = document.getElementById('grid');
+  var count = document.getElementById('count');
+  var fSeason = document.getElementById('fSeason');
+  var msg = document.getElementById('msg');
+
+  SEASONS.forEach(function (s) {
+    var o = document.createElement('option'); o.value = s; o.textContent = s; fSeason.appendChild(o);
+  });
+
+  var TAB_LIST = SEASONS.concat(['All']);
+
+  function buildTabs() {
+    tabs.textContent = '';
+    TAB_LIST.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tab'; b.id = 'tab-' + s;
+      b.textContent = s === 'All' ? 'All seasons' : s;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(s === current));
+      b.tabIndex = s === current ? 0 : -1;
+      b.addEventListener('click', function () { current = s; buildTabs(); render(); });
+      b.addEventListener('keydown', function (e) {
+        var i = TAB_LIST.indexOf(s), n = null;
+        if (e.key === 'ArrowRight') n = TAB_LIST[(i + 1) % TAB_LIST.length];
+        if (e.key === 'ArrowLeft') n = TAB_LIST[(i - 1 + TAB_LIST.length) % TAB_LIST.length];
+        if (n) { e.preventDefault(); current = n; buildTabs(); render(); document.getElementById('tab-' + n).focus(); }
+      });
+      tabs.appendChild(b);
+    });
+    grid.setAttribute('aria-labelledby', 'tab-' + current);
+  }
+
+  function badgeFor(url) {
+    try {
+      var u = new URL(url);
+      if (u.pathname.indexOf('/results') === 0) return 'Search';
+      if (u.pathname.indexOf('/playlist') === 0) return 'Playlist';
+      if (u.pathname.indexOf('/shorts') === 0) return 'Short';
+      if (u.pathname.indexOf('/@') === 0 || u.pathname.indexOf('/channel') === 0) return 'Channel';
+    } catch (e) {}
+    return 'Video';
+  }
+
+  function card(v, removableIndex) {
+    var el = document.createElement('article'); el.className = 'card';
+
+    var thumb = document.createElement('a');
+    thumb.className = 'thumb'; thumb.href = v.url; thumb.target = '_blank'; thumb.rel = 'noopener noreferrer';
+    thumb.setAttribute('aria-label', 'Watch ' + v.title + ' on YouTube');
+    var play = document.createElement('span'); play.className = 'play'; play.setAttribute('aria-hidden', 'true');
+    var badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = badgeFor(v.url);
+    var season = document.createElement('span'); season.className = 'season'; season.textContent = v.season;
+    thumb.appendChild(badge); thumb.appendChild(play); thumb.appendChild(season);
+
+    var body = document.createElement('div'); body.className = 'body';
+    var h = document.createElement('h2'); h.textContent = v.title;
+    body.appendChild(h);
+    if (v.note) { var n = document.createElement('p'); n.className = 'note'; n.textContent = v.note; body.appendChild(n); }
+
+    var row = document.createElement('div'); row.className = 'row';
+    var w = document.createElement('a'); w.className = 'watch'; w.href = v.url; w.target = '_blank'; w.rel = 'noopener noreferrer';
+    w.textContent = 'Watch on YouTube ↗';
+    row.appendChild(w);
+    if (removableIndex !== null) {
+      var r = document.createElement('button'); r.type = 'button'; r.className = 'remove'; r.textContent = 'Remove';
+      r.setAttribute('aria-label', 'Remove ' + v.title);
+      r.addEventListener('click', function () { mine.splice(removableIndex, 1); save(); render(); });
+      row.appendChild(r);
+    }
+    body.appendChild(row);
+    el.appendChild(thumb); el.appendChild(body);
+    return el;
+  }
+
+  function render() {
+    grid.textContent = '';
+    var shown = 0;
+    mine.forEach(function (v, i) {
+      if (current === 'All' || v.season === current) { grid.appendChild(card(v, i)); shown++; }
+    });
+    starters.forEach(function (v) {
+      if (current === 'All' || v.season === current) { grid.appendChild(card(v, null)); shown++; }
+    });
+    if (!shown) {
+      var p = document.createElement('p'); p.className = 'empty';
+      p.textContent = 'No videos for this season yet. Add one below.';
+      grid.appendChild(p);
+    }
+    count.textContent = shown + (shown === 1 ? ' video' : ' videos');
+  }
+
+  function cleanYouTube(raw) {
+    var u;
+    try { u = new URL(raw.trim()); } catch (e) { return null; }
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+    var host = u.hostname.replace(/^www\./, '').replace(/^m\./, '');
+    if (host === 'youtu.be') {
+      var id = u.pathname.slice(1).split('/')[0];
+      return id ? 'https://www.youtube.com/watch?v=' + encodeURIComponent(id) : null;
+    }
+    if (host === 'youtube.com') return u.href;
+    return null;
+  }
+
+  // SHA-256 of the password, so the password itself is not written in the page.
+  var PASS_HASH = '496f621a49df912138c0c7b75d0b8371a316fe13453675b24d688074fe41b9e8';
+  function sha256Hex(text) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    });
+  }
+
+  document.getElementById('addForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var url = cleanYouTube(document.getElementById('fUrl').value);
+    var title = document.getElementById('fTitle').value.trim();
+    var pass = document.getElementById('fPass').value;
+    if (!url) { msg.textContent = 'That is not a YouTube link. Paste a link that starts with youtube.com or youtu.be.'; return; }
+    if (!title) { msg.textContent = 'Add a title so fans know what the video is.'; return; }
+    if (!pass) { msg.textContent = 'Enter the password to add a video.'; return; }
+    sha256Hex(pass).then(function (h) {
+      if (h !== PASS_HASH) { msg.textContent = 'Wrong password. Try again.'; return; }
+      mine.unshift({ title: title, season: fSeason.value, url: url });
+      save();
+      document.getElementById('fUrl').value = '';
+      document.getElementById('fTitle').value = '';
+      document.getElementById('fPass').value = '';
+      msg.textContent = '';
+      current = fSeason.value; buildTabs(); render();
+    }, function () {
+      msg.textContent = 'This browser cannot check the password. Try a different browser.';
+    });
+  });
+
+  buildTabs();
+  render();
+})();
+</script>
+</body>
+</html>
